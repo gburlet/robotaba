@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %} Upload Audio {% endblock %}
+
+{% block content %}
+
+<!-- Main hero unit for a primary marketing message or call to action -->
+<div class="row-fluid">
+    <div class="span12">
+        <div class="hero-unit">
+            <div class="row-fluid">
+                <div class="span12">
+                    <h1>Upload Audio File</h1>
+                    <p>Upload a recording of you playing guitar.</p>
+                    <form action="{% url audio_upload %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <table>
+                            <tr>
+                                <td colspan="2">{{ form.non_field_errors }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ form.piece_name.label_tag }}</td><td>{{ form.piece_name }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ form.author_name.label_tag }}</td><td>{{ form.author_name }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ form.audio_file.label_tag }}</td><td>{{ form.audio_file }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="highlight">{{ form.audio_file.help_text }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><input type="submit" value="Upload"/></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
