@@ -12,17 +12,20 @@
                 <div class="span12">
                     <h1>Upload Audio File</h1>
                     <p>Upload a recording of you playing guitar.</p>
-                    <form action="{% url audio_upload %}" method="post" enctype="multipart/form-data">
+                    <form action="." method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <table>
                             <tr>
                                 <td colspan="2">{{ form.non_field_errors }}</td>
                             </tr>
                             <tr>
-                                <td>{{ form.piece_name.label_tag }}</td><td>{{ form.piece_name }}</td>
+                                <td>{{ form.title.label_tag }}</td><td>{{ form.title }}</td>
                             </tr>
                             <tr>
-                                <td>{{ form.author_name.label_tag }}</td><td>{{ form.author_name }}</td>
+                                <td>{{ form.artist.label_tag }}</td><td>{{ form.artist }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ form.copyright.label_tag }}</td><td>{{ form.copyright }}</td>
                             </tr>
                             <tr>
                                 <td>{{ form.audio_file.label_tag }}</td><td>{{ form.audio_file }}</td>
