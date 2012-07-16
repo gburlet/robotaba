@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block css_includes %} 
+<link href="{{ STATIC_URL }}css/alphaTab.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<!-- Main hero unit for a primary marketing message or call to action -->
+<div class="row-fluid">
+    <div class="span12">
+        <div class="hero-unit">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="alphaTab">
+                        {{ alphatex }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js_includes %}
+<script src="{{ STATIC_URL }}js/alphaTab.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.alphaTab.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('div.alphaTab').alphaTab({staves: ["score", "tablature"]});
+    });
+</script>
+
+{% endblock %}
