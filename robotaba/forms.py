@@ -1,15 +1,15 @@
 from django import forms
 
-class UploadAudioForm(forms.Form):
-    piece_name = forms.CharField(
-        max_length=200,
-        label="Name of piece"
+class UploadMusicForm(forms.Form):
+    title = forms.CharField(
+        max_length=100,
+        label='Title'
     )
-    author_name = forms.CharField(
-        max_length=200,
-        label="Name of author"
+    artist = forms.CharField(
+        max_length=50,
+        label='Artist'
     )
-    audio_file = forms.FileField(
-        label = "Select an audio file",
-        help_text = "Maximum 15MB (.wav, .mp3)"
+    copyright = forms.CharField(
+        max_length=50,
+        label='Copyright Holder'
     )
