@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-from robotaba.models import MetaMusic
 from pitchestimate.models import MeiPitch
 
 import os
@@ -14,7 +13,6 @@ from darwintab.score.score import Score
 Entities
 '''
 class MeiTab(models.Model):
-    fk_mid = models.ForeignKey(MetaMusic)
     mei_file = models.FileField(upload_to='mei/tab')
 
 class Tabulate(models.Model):

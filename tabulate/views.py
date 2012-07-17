@@ -19,10 +19,6 @@ def upload_score(request):
         # deal with the form input
         form = UploadScoreForm(request.POST, request.FILES)
         if form.is_valid():
-            # enter audio information into db
-            meta_data = MetaMusic(title=request.POST['title'], artist=request.POST['artist'], copyright=request.POST['copyright'])
-            meta_data.save()
-
             # check extension of uploaded score file
             input_file = request.FILES['score_file']
             _, input_ext = os.path.splitext(input_file.name)
@@ -32,7 +28,7 @@ def upload_score(request):
             elif input_ext != '.mei':
                 raise ValueError('Input file must be a MusicXML or Mei file')
 
-            pmei = MeiPitch(fk_mid=meta_data, mei_file=input_file)
+            pmei = MeiPitch(mei_file=input_file)
             pmei.save()
 
             frets = request.POST['num_frets']

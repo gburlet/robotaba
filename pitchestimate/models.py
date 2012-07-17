@@ -1,13 +1,11 @@
 from django.db import models
 
 from robotaba.models import Audio
-from robotaba.models import MetaMusic
 
 '''
 Entities
 '''
 class MeiPitch(models.Model):
-    fk_mid = models.ForeignKey(MetaMusic)
     mei_file = models.FileField(upload_to='mei/pitch')
     # may be null (if uploaded just for tab generation)
     upload_ts = models.DateTimeField(auto_now_add=True, null=True)

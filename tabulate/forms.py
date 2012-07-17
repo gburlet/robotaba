@@ -1,8 +1,6 @@
 from django import forms
 
-from robotaba.forms import UploadMusicForm
-
-class UploadScoreForm(UploadMusicForm):
+class UploadScoreForm(forms.Form):
     num_frets = forms.IntegerField(
         label = "Number of Guitar Frets",
         min_value = 12,
