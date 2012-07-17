@@ -48,11 +48,11 @@ class Tabulate(models.Model):
         ga.save_elite(score, str(output_mei_path))
 
         # get metadata of tab
-        tab = MeiTab(fk_mid=self.fk_pmei.fk_mid, mei_file=output_mei_path)
+        tab = MeiTab(mei_file=output_mei_path)
         tab.save()
 
         # attach the tab to the Tabulate object
-        self.fk_tmei=tab
+        self.fk_tmei = tab
         # Note that saving also updates self.output_ts to clock out the
         # analysis time
         self.save()

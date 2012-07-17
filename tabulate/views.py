@@ -50,13 +50,16 @@ def process(request, pmei_id):
     pmei = get_object_or_404(MeiPitch, pk=pmei_id)
 
     try:
-        frets = request.GET['frets']
-        capo = request.GET['capo']
+        frets = int(request.GET['frets'])
+        capo = int(request.GET['capo'])
         tuning = request.GET['tuning']
     except KeyError:
         return HttpResponse("Need to specify number of frets, capo position, and guitar tuning")
 
     taber = Tabulate(fk_pmei=pmei, num_frets=frets, tuning=tuning, capo=capo)
+    # writing to the database writes the start timestamp
+    taber.save()
+
     # TODO: create spinner on interface
     mei_tab_path = taber.gen_tab()
 

@@ -3,7 +3,7 @@ from django import forms
 class UploadScoreForm(forms.Form):
     num_frets = forms.IntegerField(
         label = "Number of Guitar Frets",
-        min_value = 12,
+        min_value = 10,
         max_value = 24,
         initial=22
     )
