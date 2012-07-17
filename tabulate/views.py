@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 from robotaba.models import MetaMusic
 from pitchestimate.models import MeiPitch
-from tabulate.models import Tabulate
+from tabulate.models import MeiTab, Tabulate
 from tabulate.forms import UploadScoreForm
 from tabulate.resources.meitoalphatex import meitoalphatex
 
@@ -61,9 +61,15 @@ def process(request, pmei_id):
     taber.save()
 
     # TODO: create spinner on interface
-    mei_tab_path = taber.gen_tab()
+    taber.gen_tab()
 
-    alpha_tex = meitoalphatex(mei_tab_path)
+    # redirect to tab display page
+    return HttpResponseRedirect('/tabulate/display/%d' % taber.fk_tmei.id)
 
-    # TODO: create tab viewer url instead of rendering to response here
+def display(request, tmei_id):
+    # query db for the mei tab file
+    tmei = get_object_or_404(MeiTab, pk=tmei_id)
+
+    alpha_tex = meitoalphatex(tmei.mei_file.path)
+
     return render_to_response('displaytab.html', {'alphatex': alpha_tex}, context_instance=RequestContext(request))

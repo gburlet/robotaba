@@ -11,5 +11,6 @@ urlpatterns = patterns('',
     url(r'^pitchestimate/(?P<audio_id>\d+)/$', 'pitchestimate.views.process'),
     url(r'^tabulate/upload/$', 'tabulate.views.upload_score', name='tabulate_upload'),
     url(r'^tabulate/(?P<pmei_id>\d+)/$', 'tabulate.views.process'),
+    url(r'^tabulate/display/(?P<tmei_id>\d+)/$', 'tabulate.views.display'),
     url(r'^admin/', include(admin.site.urls))
 )
