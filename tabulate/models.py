@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.files.base import ContentFile
 
 from pitchestimate.models import MeiPitch
 
@@ -29,8 +30,6 @@ class Tabulate(models.Model):
     def gen_tab(self):
         input_mei_path = os.path.join(settings.MEDIA_ROOT, self.fk_pmei.mei_file.name)
         filename = os.path.split(input_mei_path)[1]
-        # TODO: figure out a better way to tie the mei output writesting to the Django FileField
-        output_mei_path = os.path.join(settings.MEDIA_ROOT, 'mei/tab', filename)
 
         # instantiate a model of the guitar the user is using
         guitar = Guitar(self.num_frets, self.tuning)
@@ -39,22 +38,20 @@ class Tabulate(models.Model):
         score = Score(input_mei_path)
         
         # start up the genetic algorithm
-        ga = SimpleGA(400, 5, 6, 0.6, 0.05, True)
+        ga = SimpleGA(400, 10, 6, 0.6, 0.05, True)
 
         # create tablature for the guitar with the given parameters
         ga.evolve(score, guitar)
         
         # save the elites to the output file
-        ga.save_elite(score, str(output_mei_path))
-
-        # get metadata of tab
-        tab = MeiTab(mei_file=output_mei_path)
-        tab.save()
+        mei_str = ga.save_elite(score)
+        file_contents = ContentFile(mei_str)
+        
+        tab = MeiTab()
+        tab.mei_file.save(filename, file_contents, save=True)
 
         # attach the tab to the Tabulate object
         self.fk_tmei = tab
         # Note that saving also updates self.output_ts to clock out the
         # analysis time
         self.save()
-
-        return output_mei_path
