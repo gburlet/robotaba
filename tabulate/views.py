@@ -21,16 +21,18 @@ def upload_score(request):
         if form.is_valid():
             # check extension of uploaded score file
             input_file = request.FILES['score_file']
-            _, input_ext = os.path.splitext(input_file.name)
+            filename, input_ext = os.path.splitext(input_file.name)
             if input_ext == '.xml':
-                # TODO: convert to mei
-                pass
-            elif input_ext != '.mei':
+                # convert the MusicXML file to Mei format
+                pmei = MeiPitch()
+                pmei.convert_musicxml(filename+'.mei', request.FILES['score_file'].read())
+            elif input_ext == '.mei':
+                # the uploaded file is an mei file, put it directly into the model
+                pmei = MeiPitch(mei_file=input_file)
+                pmei.save()
+            else:
                 raise ValueError('Input file must be a MusicXML or Mei file')
-
-            pmei = MeiPitch(mei_file=input_file)
-            pmei.save()
-
+            
             frets = request.POST['num_frets']
             capo = request.POST['capo']
             tuning = request.POST['tuning']
