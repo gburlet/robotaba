@@ -1,9 +1,13 @@
 from django.db import models
 from django.core.files.base import ContentFile
+from django.conf import settings
 
 from robotaba.models import Audio
 
 from musicxmlmeiconversion.musicxmltomei import MusicXMLtoMei
+from multif0estimation.f0estimate import F0Estimate
+
+import os
 
 '''
 Entities
@@ -24,8 +28,31 @@ class MeiPitch(models.Model):
 
 class PitchDetect(models.Model):
     fk_audio = models.ForeignKey(Audio)
-    fk_pmei = models.ForeignKey(MeiPitch)
+    fk_pmei = models.ForeignKey(MeiPitch, null=True)
     # timestamp when processing begins
     process_ts = models.DateTimeField(auto_now_add=True)
     # timestamp when processing has completed
-    output_ts = models.DateTimeField(auto_now_add=True)
+    output_ts = models.DateTimeField(auto_now=True)
+
+    def estimate_pitches(self):
+        input_audio_path = os.path.join(settings.MEDIA_ROOT, self.fk_audio.audio_file.name)
+        # get filename and change extension to mei
+        filename, _ = os.path.splitext(os.path.split(input_audio_path)[1])
+        filename += '.mei'
+
+        # perform the pitch estimation on the audio input file
+        freq_est = F0Estimate(max_poly=1)
+        f0_estimates, notes = freq_est.estimate_f0s(input_audio_path)
+        notes_c = freq_est.collapse_notes(notes)
+        mei_str = freq_est.write_mei(notes_c)
+
+        # save the mei to the output file
+        file_contents = ContentFile(mei_str)
+        pmei = MeiPitch()
+        pmei.mei_file.save(filename, file_contents, save=True)
+
+        # attach the tab to the Tabulate object
+        self.fk_pmei = pmei
+        # Note that saving also updates self.output_ts to clock out the
+        # analysis time
+        self.save()
