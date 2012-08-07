@@ -46,12 +46,12 @@ def process(request, audio_id):
     # query db for the audio file
     audio = get_object_or_404(Audio, pk=audio_id)
 
-    p_detector = PitchDetect(fk_audio=audio)
+    pestimator = PitchDetect(fk_audio=audio)
     # writing to the database writes the analysis start timestamp
-    p_detector.save()
+    pestimator.save()
 
     # TODO: create spinner on the interface
-    p_detector.estimate_pitches()
+    pestimator.estimate_pitches()
 
     # redirect to xml display
-    return HttpResponseRedirect('/media/%s' % p_detector.fk_pmei.mei_file.name)
+    return HttpResponseRedirect('/media/%s' % pestimator.fk_pmei.mei_file.name)

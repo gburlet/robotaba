@@ -41,7 +41,9 @@ class PitchDetect(models.Model):
         filename += '.mei'
 
         # perform the pitch estimation on the audio input file
-        freq_est = F0Estimate(max_poly=1)
+        # min and max f0 candidates from gagnon2003, "A Neural Network Approach
+        # for Pre-classification in Musical Chords Recognition (82.41Hz - 1244.51Hz)
+        freq_est = F0Estimate(max_poly=1, min_f0=82.41, max_f0=1244.51, frame_len=0.093)
         f0_estimates, notes = freq_est.estimate_f0s(input_audio_path)
         notes_c = freq_est.collapse_notes(notes)
         mei_str = freq_est.write_mei(notes_c)
