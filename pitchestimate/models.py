@@ -5,7 +5,9 @@ from django.conf import settings
 from robotaba.models import Audio
 
 from musicxmlmeiconversion.musicxmltomei import MusicXMLtoMei
-from multif0estimation.f0estimate import F0Estimate
+from ztranscribe.polytrans import PolyTrans
+
+from pymei import XmlImport, XmlExport, MeiElement
 
 import os
 
@@ -41,12 +43,10 @@ class PitchDetect(models.Model):
         filename += '.mei'
 
         # perform the pitch estimation on the audio input file
-        # min and max f0 candidates from gagnon2003, "A Neural Network Approach
-        # for Pre-classification in Musical Chords Recognition (82.41Hz - 1244.51Hz)
-        freq_est = F0Estimate(max_poly=1, min_f0=82.41, max_f0=1244.51, frame_len=0.093)
-        f0_estimates, notes = freq_est.estimate_f0s(input_audio_path)
-        notes_c = freq_est.collapse_notes(notes)
-        mei_str = freq_est.write_mei(notes_c)
+        t = PolyTrans()
+        note_events = t.transcribe(input_audio_path)
+        mei_str = t.write_mei(note_events)
+        mei_str = self._appendMetaData(mei_str)
 
         # save the mei to the output file
         file_contents = ContentFile(mei_str)
@@ -58,3 +58,51 @@ class PitchDetect(models.Model):
         # Note that saving also updates self.output_ts to clock out the
         # analysis time
         self.save()
+
+    def _appendMetaData(self, mei_str):
+        '''
+        Append meta data for the musical work
+        '''
+
+        mei_doc = XmlImport.documentFromText(mei_str)
+
+        mei = mei_doc.getRootElement()
+        mei_head = MeiElement('meiHead')
+        music = mei.getChildrenByName('music')[0]
+        
+        file_desc = MeiElement('fileDesc')
+
+        # title
+        title_stmt = MeiElement('titleStmt')
+        title = MeiElement('title')
+        title.setValue(str(self.fk_audio.fk_mid.title))
+
+        # contributers
+        resp_stmt = MeiElement('respStmt')
+        pers_name_artist = MeiElement('persName')
+        pers_name_artist.addAttribute('role', 'artist')
+        pers_name_artist.setValue(str(self.fk_audio.fk_mid.artist))
+        pers_name_tabber = MeiElement('persName')
+        pers_name_tabber.addAttribute('role', 'tabber')
+        pers_name_tabber.setValue(str(self.fk_audio.fk_mid.copyright))
+
+        # encoding information
+        encoding_desc = MeiElement('encodingDesc')
+        app_info = MeiElement('appInfo')
+        application = MeiElement('application')
+        application.setValue('Robotaba')
+
+        mei_head.addChild(file_desc)
+        file_desc.addChild(title_stmt)
+        title_stmt.addChild(title)
+        title_stmt.addChild(resp_stmt)
+        resp_stmt.addChild(pers_name_artist)
+        resp_stmt.addChild(pers_name_tabber)
+        title_stmt.addChild(encoding_desc)
+        encoding_desc.addChild(app_info)
+        app_info.addChild(application)
+
+        # attach mei metadata to the document
+        mei.addChildBefore(music, mei_head)
+
+        return XmlExport.meiDocumentToText(mei_doc)
