@@ -9,6 +9,9 @@ import os
 from darwintab.ga.simplega import SimpleGA
 from darwintab.guitar.guitar import Guitar
 from darwintab.score.score import Score
+from darwintab.score.scoreevent import Note
+
+from pymei import XmlImport, XmlExport, MeiElement
 
 '''
 Entities
@@ -38,13 +41,14 @@ class Tabulate(models.Model):
         score = Score(input_mei_path)
         
         # start up the genetic algorithm
-        ga = SimpleGA(400, 10, 6, 0.6, 0.05, True)
+        ga = SimpleGA(100, 25, 4, 0.65, 0.04, True)
 
         # create tablature for the guitar with the given parameters
         ga.evolve(score, guitar)
         
         # save the elites to the output file
         mei_str = ga.save_elite(score)
+        mei_str = self._appendMetaData(mei_str)
         file_contents = ContentFile(mei_str)
         
         tab = MeiTab()
@@ -55,3 +59,28 @@ class Tabulate(models.Model):
         # Note that saving also updates self.output_ts to clock out the
         # analysis time
         self.save()
+
+    def _appendMetaData(self, mei_str):
+        '''
+        Append meta data about the guitar the transcriber is using
+        '''
+
+        mei_doc = XmlImport.documentFromText(mei_str)
+
+        staff_def = mei_doc.getElementsByName('staffDef')[0]
+        sounding_pitches = Guitar.tunings[self.tuning]
+        # From the MEI guidelines:
+        # "this is given using the written pitch, not the sounding pitch. 
+        # For example, the Western 6-string guitar, in standard tuning, sounds an octave below written pitch."
+        written_pitches = [s.pname + str(s.oct+1) for s in sounding_pitches]
+
+        staff_def.addAttribute('lines', str(len(sounding_pitches)))
+        staff_def.addAttribute('tab.strings', " ".join(written_pitches))
+
+        # Capo could be implicitly encoded by setting the pitches of the open strings
+        # but I really don't like this solution. Instructions are lost about how to tune
+        # and perform the piece on the guitar.
+        # TODO: this attribute doesn't exist in MEI, make a custom build
+        staff_def.addAttribute('tab.capo', str(self.capo))
+
+        return XmlExport.meiDocumentToText(mei_doc)

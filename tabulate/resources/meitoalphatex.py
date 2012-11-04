@@ -31,28 +31,34 @@ def meitoalphatex(mei_path):
                 tex_words = "\\words \"%s\"\n" % p.getValue()
                 alphatex += tex_words
 
-    # guitar tuning
-    pnames = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
     staff_def = mei.getDescendantsByName('staffDef')
-    if len(staff_def) and staff_def[0].hasAttribute('tab.strings'):
-        strings = staff_def[0].getAttribute('tab.strings').value.split(' ')
-        # in alpha tab the ordering is backwards
-        strings.reverse()
-        if len(strings) != 6:
-            raise ValueError('Invalid number of strings: should be 6')
+    if len(staff_def):
+        # capo position
+        if staff_def[0].hasAttribute('tab.capo'):
+            capo = staff_def[0].getAttribute('tab.capo').value
 
-        # convert pitch names to those used in alphatab (flats vs. sharps)
-        for i in range(len(strings)):
-            pattern = re.compile('^([a-zA-z][#s])')
-            match = pattern.match(strings[i])
-            if match:
-                mei_pname = match.group()
-                alpha_pname = pnames[pnames.index(mei_pname[0])+1 % len(pnames)] + 'b'
-                oct = strings[i][-1]
-                # replace string
-                strings[i] = alpha_pname + oct
+            alphatex += '\\capo %s\n' % capo
 
-        alphatex += '\\tuning %s\n' % ' '.join(strings)
+        # guitar tuning
+        pnames = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+        
+        if staff_def[0].hasAttribute('tab.strings'):
+            strings = staff_def[0].getAttribute('tab.strings').value.split(' ')
+            if len(strings) != 6:
+                raise ValueError('Invalid number of strings: should be 6')
+
+            # convert pitch names to those used in alphatab (flats vs. sharps)
+            for i in range(len(strings)):
+                pattern = re.compile('^([a-zA-z][#s])')
+                match = pattern.match(strings[i])
+                if match:
+                    mei_pname = match.group()
+                    alpha_pname = pnames[pnames.index(mei_pname[0])+1 % len(pnames)] + 'b'
+                    oct = strings[i][-1]
+                    # replace string
+                    strings[i] = alpha_pname + oct
+
+            alphatex += '\\tuning %s\n' % ' '.join(strings)
 
     # set midi instrument to play the tab with
     # 27 is Electric Guitar Clean
