@@ -13,3 +13,8 @@ class Audio(models.Model):
 
     def __unicode__(self):
         return str(self.id) + ": " + self.piece_name
+
+class Guitar(models.Model):
+    num_frets = models.IntegerField(default=24)
+    tuning = models.CharField(max_length=25, default='standard')
+    capo = models.IntegerField(default=0)

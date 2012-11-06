@@ -3,6 +3,7 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 
 from robotaba.models import Audio
+from robotaba.models import Guitar as GuitarModel
 
 from musicxmlmeiconversion.musicxmltomei import MusicXMLtoMei
 from ztranscribe.polytrans import PolyTrans
@@ -31,6 +32,7 @@ class MeiPitch(models.Model):
 class PitchDetect(models.Model):
     fk_audio = models.ForeignKey(Audio)
     fk_pmei = models.ForeignKey(MeiPitch, null=True)
+    fk_guitar = models.ForeignKey(GuitarModel, null=True)
     # timestamp when processing begins
     process_ts = models.DateTimeField(auto_now_add=True)
     # timestamp when processing has completed
@@ -45,6 +47,10 @@ class PitchDetect(models.Model):
         # perform the pitch estimation on the audio input file
         t = PolyTrans()
         note_events = t.transcribe(input_audio_path)
+
+        if self.fk_guitar is not None:
+            t.guitarify(note_events, self.fk_guitar.num_frets, self.fk_guitar.tuning, self.fk_guitar.capo)
+
         mei_str = t.write_mei(note_events)
         mei_str = self._appendMetaData(mei_str)
 

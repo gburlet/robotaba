@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 
 from pitchestimate.models import MeiPitch
+from robotaba.models import Guitar as GuitarModel
 
 import os
 
@@ -22,9 +23,7 @@ class MeiTab(models.Model):
 class Tabulate(models.Model):
     fk_pmei = models.ForeignKey(MeiPitch)
     fk_tmei = models.ForeignKey(MeiTab, null=True)
-    num_frets = models.IntegerField(default=22)
-    tuning = models.CharField(max_length=25, default='standard')
-    capo = models.IntegerField(default=0)
+    fk_guitar = models.ForeignKey(GuitarModel) 
     # timestamp when processing begins
     process_ts = models.DateTimeField(auto_now_add=True)
     # timestamp when processing has completed
@@ -41,7 +40,7 @@ class Tabulate(models.Model):
         score = Score(input_mei_path)
         
         # start up the genetic algorithm
-        ga = SimpleGA(100, 25, 4, 0.65, 0.04, True)
+        ga = SimpleGA(200, 30, 4, 0.9, 0.04, True)
 
         # create tablature for the guitar with the given parameters
         ga.evolve(score, guitar)

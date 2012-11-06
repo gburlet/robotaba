@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 
 from robotaba.models import Audio, MetaMusic
+from robotaba.models import Guitar as GuitarModel
 from pitchestimate.models import PitchDetect
 
 import os
@@ -32,10 +33,18 @@ def upload_audio(request):
             )
             meta.save()
 
+            get_vars = ""
+            if request.POST.get('guitarify', False):
+                frets = request.POST['num_frets']
+                capo = request.POST['capo']
+                tuning = request.POST['tuning']
+
+                get_vars = '?frets=%s&capo=%s&tuning=%s' % (frets, capo, tuning)
+
             audio = Audio(fk_mid=meta, audio_file=input_file)
             audio.save()
 
-            return HttpResponseRedirect('/pitchestimate/%d/' % audio.id)
+            return HttpResponseRedirect('/pitchestimate/%d/%s' % (audio.id, get_vars))
     else:
         # serve the form
         form = UploadAudioForm()
@@ -46,7 +55,27 @@ def process(request, audio_id):
     # query db for the audio file
     audio = get_object_or_404(Audio, pk=audio_id)
 
-    pestimator = PitchDetect(fk_audio=audio)
+    guitar_model = True
+    try:
+        frets = int(request.GET['frets'])
+        capo = int(request.GET['capo'])
+        tuning = request.GET['tuning']
+    except KeyError:
+        # don't use a guitar model for polyphonic transcription
+        guitar_model = False
+
+    db_fields = {'fk_audio': audio}
+    if guitar_model:
+        guitar = GuitarModel(
+            num_frets=frets,
+            capo=capo,
+            tuning=tuning
+        )
+        guitar.save()
+
+        db_fields['fk_guitar'] = guitar
+
+    pestimator = PitchDetect(**db_fields)
     # writing to the database writes the analysis start timestamp
     pestimator.save()
 

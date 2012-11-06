@@ -3,6 +3,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 
 from robotaba.models import MetaMusic
+from robotaba.models import Guitar as GuitarModel
 from pitchestimate.models import MeiPitch
 from tabulate.models import MeiTab, Tabulate
 from tabulate.forms import UploadScoreForm
@@ -58,7 +59,14 @@ def process(request, pmei_id):
     except KeyError:
         return HttpResponse("Need to specify number of frets, capo position, and guitar tuning")
 
-    taber = Tabulate(fk_pmei=pmei, num_frets=frets, tuning=tuning, capo=capo)
+    guitar = GuitarModel(
+        num_frets=frets,
+        capo=capo,
+        tuning=tuning
+    )
+    guitar.save()
+
+    taber = Tabulate(fk_pmei=pmei, fk_guitar=guitar)
     # writing to the database writes the start timestamp
     taber.save()
 

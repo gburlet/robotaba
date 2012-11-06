@@ -2,6 +2,21 @@
 
 {% block title %} Upload Audio {% endblock %}
 
+{% block js_inject %}
+    $(document).ready(function() {
+        $("tr.guitarify").hide();
+
+        $("#id_guitarify").change(function() {
+            if(!this.checked) {
+                $("tr.guitarify").hide();
+            }
+            else {
+                $("tr.guitarify").show();
+            }
+        });
+    });
+{% endblock %}
+
 {% block content %}
 
 <!-- Main hero unit for a primary marketing message or call to action -->
@@ -26,6 +41,24 @@
                             </tr>
                             <tr>
                                 <td>{{ form.copyright.label_tag }}</td><td>{{ form.copyright }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><hr/></td>
+                            </tr>
+                            <tr>
+                                <td>{{ form.guitarify.label_tag }}</td><td>{{ form.guitarify }}</td>
+                            </tr>
+                            <tr class="guitarify">
+                                <td>{{ form.num_frets.label_tag }}</td><td>{{ form.num_frets }}</td>
+                            </tr>
+                            <tr class="guitarify">
+                                <td>{{ form.tuning.label_tag }}</td><td>{{ form.tuning }}</td>
+                            </tr>
+                            <tr class="guitarify">
+                                <td>{{ form.capo.label_tag }} ({{ form.capo.help_text }})</td><td>{{ form.capo }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><hr/></td>
                             </tr>
                             <tr>
                                 <td>{{ form.audio_file.label_tag }}</td><td>{{ form.audio_file }}</td>
