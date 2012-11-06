@@ -22,14 +22,23 @@ def upload_score(request):
         if form.is_valid():
             # check extension of uploaded score file
             input_file = request.FILES['score_file']
+
+            # TODO: try and parse this information from the XML file
+            meta = MetaMusic(
+                title=request.POST['title'], 
+                artist=request.POST['artist'],
+                copyright=request.POST['copyright']
+            )
+            meta.save()
+
             filename, input_ext = os.path.splitext(input_file.name)
             if input_ext == '.xml':
                 # convert the MusicXML file to Mei format
-                pmei = MeiPitch()
+                pmei = MeiPitch(fk_mid=meta)
                 pmei.convert_musicxml(filename+'.mei', request.FILES['score_file'].read())
             elif input_ext == '.mei':
                 # the uploaded file is an mei file, put it directly into the model
-                pmei = MeiPitch(mei_file=input_file)
+                pmei = MeiPitch(mei_file=input_file, fk_mid=meta)
                 pmei.save()
             else:
                 raise ValueError('Input file must be a MusicXML or Mei file')

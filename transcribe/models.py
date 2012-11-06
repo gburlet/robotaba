@@ -5,6 +5,7 @@ from django.db import models
 from django.conf import settings
 
 from robotaba.models import Audio
+from robotaba.models import Guitar as GuitarModel
 from pitchestimate.models import PitchDetect
 from tabulate.models import Tabulate
 
@@ -12,7 +13,6 @@ from tabulate.models import Tabulate
 class Transcription(models.Model):
     fk_audio = models.ForeignKey(Audio)
     fk_pid = models.ForeignKey(PitchDetect)
-    # TODO: make this one to many (one transcription can have multiple tablatures)
     fk_tabid = models.ForeignKey(Tabulate)
 
     def __unicode__(self):
@@ -25,7 +25,14 @@ class Transcription(models.Model):
         ####################
         # PITCH ESTIMATION #
         ####################
-        pestimator = PitchDetect(fk_audio=self.fk_audio)
+        guitar = GuitarModel(
+            num_frets=frets,
+            capo=capo,
+            tuning=tuning
+        )
+        guitar.save()
+
+        pestimator = PitchDetect(fk_audio=self.fk_audio, fk_guitar=guitar)
         # writing to the database writes the analysis start timestamp
         pestimator.save()
 
@@ -37,7 +44,7 @@ class Transcription(models.Model):
         ########################
         # TABLATURE GENERATION #
         ########################
-        taber = Tabulate(fk_pmei=self.fk_pid.fk_pmei, num_frets=frets, tuning=tuning, capo=capo)
+        taber = Tabulate(fk_pmei=self.fk_pid.fk_pmei, fk_guitar=guitar)
         # writing to the database writes the analysis start timestamp
         taber.save()
 

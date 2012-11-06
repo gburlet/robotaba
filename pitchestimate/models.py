@@ -2,7 +2,7 @@ from django.db import models
 from django.core.files.base import ContentFile
 from django.conf import settings
 
-from robotaba.models import Audio
+from robotaba.models import Audio, MetaMusic
 from robotaba.models import Guitar as GuitarModel
 
 from musicxmlmeiconversion.musicxmltomei import MusicXMLtoMei
@@ -17,6 +17,7 @@ Entities
 '''
 class MeiPitch(models.Model):
     mei_file = models.FileField(upload_to='mei/pitch')
+    fk_mid = models.ForeignKey(MetaMusic)
     # may be null (if uploaded just for tab generation)
     upload_ts = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -56,7 +57,7 @@ class PitchDetect(models.Model):
 
         # save the mei to the output file
         file_contents = ContentFile(mei_str)
-        pmei = MeiPitch()
+        pmei = MeiPitch(fk_mid=self.fk_audio.fk_mid)
         pmei.mei_file.save(filename, file_contents, save=True)
 
         # attach the tab to the Tabulate object
