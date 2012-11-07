@@ -38,8 +38,9 @@ def upload_audio(request):
                 frets = request.POST['num_frets']
                 capo = request.POST['capo']
                 tuning = request.POST['tuning']
+                sanitize = request.POST['pitch_sanitize']
 
-                get_vars = '?frets=%s&capo=%s&tuning=%s' % (frets, capo, tuning)
+                get_vars = '?frets=%s&capo=%s&tuning=%s&sanitize=%s' % (frets, capo, tuning, sanitize)
 
             audio = Audio(fk_mid=meta, audio_file=input_file)
             audio.save()
@@ -60,6 +61,7 @@ def process(request, audio_id):
         frets = int(request.GET['frets'])
         capo = int(request.GET['capo'])
         tuning = request.GET['tuning']
+        pitch_sanitize_prune = True if request.GET['sanitize'] == 'prune' else False
     except KeyError:
         # don't use a guitar model for polyphonic transcription
         guitar_model = False
@@ -74,6 +76,7 @@ def process(request, audio_id):
         guitar.save()
 
         db_fields['fk_guitar'] = guitar
+        db_fields['pitch_sanitize_prune'] = pitch_sanitize_prune
 
     pestimator = PitchDetect(**db_fields)
     # writing to the database writes the analysis start timestamp

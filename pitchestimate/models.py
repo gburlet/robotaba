@@ -87,6 +87,7 @@ class PitchDetect(models.Model):
     fk_audio = models.ForeignKey(Audio)
     fk_pmei = models.ForeignKey(MeiPitch, null=True)
     fk_guitar = models.ForeignKey(GuitarModel, null=True)
+    pitch_sanitize_prune = models.NullBooleanField(null=True)
     # timestamp when processing begins
     process_ts = models.DateTimeField(auto_now_add=True)
     # timestamp when processing has completed
@@ -112,7 +113,7 @@ class PitchDetect(models.Model):
         if self.fk_guitar is not None:
             guitarify = Guitarify(self.fk_guitar.num_frets, self.fk_guitar.tuning, self.fk_guitar.capo)
             # write in place
-            guitarify.sanitize_mei_file(pmei.get_abs_path(), pmei.get_abs_path(), prune=True)
+            guitarify.sanitize_mei_file(pmei.get_abs_path(), pmei.get_abs_path(), prune=self.pitch_sanitize_prune)
 
         pmei.mei_append_metamusic()
 

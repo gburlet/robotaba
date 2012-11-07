@@ -56,6 +56,7 @@ class Tabulate(models.Model):
     fk_pmei = models.ForeignKey(MeiPitch)
     fk_tmei = models.ForeignKey(MeiTab, null=True)
     fk_guitar = models.ForeignKey(GuitarModel) 
+    pitch_sanitize_prune = models.NullBooleanField(null=True)
     # timestamp when processing begins
     process_ts = models.DateTimeField(auto_now_add=True)
     # timestamp when processing has completed
@@ -69,7 +70,7 @@ class Tabulate(models.Model):
         # don't clobber original pmei file, since the tablature should be able to be arranged
         # with different guitar models
         guitarify = Guitarify(self.fk_guitar.num_frets, self.fk_guitar.tuning, self.fk_guitar.capo)
-        sanitized_mei_str = guitarify.sanitize_mei_file(self.fk_pmei.get_abs_path(), None, prune=True)
+        sanitized_mei_str = guitarify.sanitize_mei_file(self.fk_pmei.get_abs_path(), None, prune=self.pitch_sanitize_prune)
 
         # instantiate a model of the guitar the user is using
         guitar = Guitar(self.fk_guitar.num_frets, self.fk_guitar.tuning, self.fk_guitar.capo)

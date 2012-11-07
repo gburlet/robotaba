@@ -46,11 +46,12 @@ def upload_score(request):
             frets = request.POST['num_frets']
             capo = request.POST['capo']
             tuning = request.POST['tuning']
+            sanitize = request.POST['pitch_sanitize']
 
             # redirect and construct the Tabulate object in the process view to allow
             # the input file to be processed multiple times by the user
             # to get different tablature output, if desired.
-            return HttpResponseRedirect('/tabulate/%d/?frets=%s&capo=%s&tuning=%s' % (pmei.id, frets, capo, tuning))
+            return HttpResponseRedirect('/tabulate/%d/?frets=%s&capo=%s&tuning=%s&sanitize=%s' % (pmei.id, frets, capo, tuning, sanitize))
     else:
         # serve the form
         form = UploadScoreForm()
@@ -65,6 +66,7 @@ def process(request, pmei_id):
         frets = int(request.GET['frets'])
         capo = int(request.GET['capo'])
         tuning = request.GET['tuning']
+        pitch_sanitize_prune = True if request.GET['sanitize'] == 'prune' else False
     except KeyError:
         return HttpResponse("Need to specify number of frets, capo position, and guitar tuning")
 
@@ -75,7 +77,7 @@ def process(request, pmei_id):
     )
     guitar.save()
 
-    taber = Tabulate(fk_pmei=pmei, fk_guitar=guitar)
+    taber = Tabulate(fk_pmei=pmei, fk_guitar=guitar, pitch_sanitize_prune=pitch_sanitize_prune)
     # writing to the database writes the start timestamp
     taber.save()
 

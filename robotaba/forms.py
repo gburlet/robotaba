@@ -15,6 +15,13 @@ class MetaDataForm(forms.Form):
     )
 
 class GuitarDataForm(forms.Form):
+    pitch_sanitize=forms.ChoiceField(
+        label="Pitch sanitization",
+        choices=[("prune", "Prune"),
+                 ("transpose", "Transpose")],
+        initial="prune",
+        widget=forms.RadioSelect()
+    )
     num_frets=forms.IntegerField(
         label="Number of Guitar Frets",
         min_value=10,
