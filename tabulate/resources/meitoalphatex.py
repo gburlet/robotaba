@@ -37,7 +37,9 @@ def meitoalphatex(mei_path):
         if staff_def[0].hasAttribute('tab.capo'):
             capo = staff_def[0].getAttribute('tab.capo').value
 
-            alphatex += '\\capo %s\n' % capo
+            if int(capo) > 0:
+                alphatex += '\\capo %s\n' % capo # this doesn't display
+                alphatex += '\\words %s\n' % capo # hack this to display
 
         # guitar tuning
         pnames = ['C', 'D', 'E', 'F', 'G', 'A', 'B']

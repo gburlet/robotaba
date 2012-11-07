@@ -48,7 +48,8 @@ class MeiTab(models.Model):
         # but I really don't like this solution. Instructions are lost about how to tune
         # and perform the piece on the guitar.
         # TODO: this attribute doesn't exist in MEI, make a custom build
-        staff_def.addAttribute('tab.capo', str(capo))
+        if capo > 0:
+            staff_def.addAttribute('tab.capo', str(capo))
 
         XmlExport.meiDocumentToFile(mei_doc, mei_path)
 

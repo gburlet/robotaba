@@ -297,6 +297,7 @@ alphatab.tablature.PageViewLayout.prototype.paintSongInfo = function(ctx,clientA
 	var tX;
 	var size;
 	var str = "";
+
 	if(song.title != "" && (song.pageSetup.headerAndFooter & 1) != 0) {
 		str = this.parsePageSetupString(song.pageSetup.title);
 		ctx.graphics.setFont(alphatab.tablature.drawing.DrawingResources.titleFont);
@@ -344,12 +345,12 @@ alphatab.tablature.PageViewLayout.prototype.paintSongInfo = function(ctx,clientA
 			tX = clientArea.width - size - this.contentPadding.right;
 			ctx.get(1).addString(str,alphatab.tablature.drawing.DrawingResources.wordsFont,tX,y);
 		}
-		if(song.words != "" && (song.pageSetup.headerAndFooter & 16) != 0) {
+		/*if(song.words != "" && (song.pageSetup.headerAndFooter & 16) != 0) {
 			str = this.parsePageSetupString(song.pageSetup.words);
 			ctx.graphics.setFont(alphatab.tablature.drawing.DrawingResources.wordsFont);
 			ctx.get(1).addString(str,alphatab.tablature.drawing.DrawingResources.wordsFont,x,y);
 		}
-		y += Math.floor(20 * this.scale);
+		y += Math.floor(20 * this.scale);*/
 	}
 	y += Math.floor(20 * this.scale);
 	if(!this.tablature.track.isPercussionTrack) {
@@ -357,6 +358,12 @@ alphatab.tablature.PageViewLayout.prototype.paintSongInfo = function(ctx,clientA
 		if(tuning != null) {
 			ctx.get(1).addString(tuning.Name,alphatab.tablature.drawing.DrawingResources.effectFont,x,y);
 			y += Math.floor(15 * this.scale);
+            if(song.words != null) {
+                str = this.parsePageSetupString(song.pageSetup.words);
+                ctx.get(1).addString(str,alphatab.tablature.drawing.DrawingResources.effectFont,x,y);
+		    }
+            y += Math.floor(15 * this.scale);
+
 			if(!tuning.IsStandard) {
 				var stringsPerColumn = Math.ceil(this.tablature.track.strings.length / 2);
 				var currentX = x;
@@ -2904,7 +2911,7 @@ alphatab.model.PageSetup = function(p) {
 	this.subtitle = "%SUBTITLE%";
 	this.artist = "%ARTIST%";
 	this.album = "%ALBUM%";
-	this.words = "Words by %WORDS%";
+	this.words = "Capo on fret: %WORDS%";
 	this.music = "Music by %MUSIC%";
 	this.wordsAndMusic = "Words & Music by %WORDSMUSIC%";
 	this.copyright = "Copyright %COPYRIGHT%\n" + "All Rights Reserved - International Copyright Secured";
@@ -3172,7 +3179,8 @@ alphatab.file.alphatex.AlphaTexParser.prototype.metaData = function() {
 		anyMeta = true;
 	} else if(this._syData == "words") {
 		this.newSy();
-		if(this._sy == alphatab.file.alphatex.AlphaTexSymbols.String) this._song.words = this._syData; else this.error("words",alphatab.file.alphatex.AlphaTexSymbols.String);
+        this._song.words = this._syData;
+		//if(this._sy == alphatab.file.alphatex.AlphaTexSymbols.Number) this._song.words = this._syData; else this.error("words",alphatab.file.alphatex.AlphaTexSymbols.Number);
 		this.newSy();
 		anyMeta = true;
 	} else if(this._syData == "music") {
