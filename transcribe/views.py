@@ -39,8 +39,9 @@ def upload_audio(request):
             frets = request.POST['num_frets']
             capo = request.POST['capo']
             tuning = request.POST['tuning']
+            sanitize = request.POST['pitch_sanitize']
 
-            return HttpResponseRedirect('/transcribe/%d/?frets=%s&capo=%s&tuning=%s' % (audio.id, frets, capo, tuning))
+            return HttpResponseRedirect('/transcribe/%d/?frets=%s&capo=%s&tuning=%s&sanitize=%s' % (audio.id, frets, capo, tuning, sanitize))
     else:
         # serve the form
         form = UploadAudioForm()
@@ -55,13 +56,14 @@ def process(request, audio_id):
         frets = int(request.GET['frets'])
         capo = int(request.GET['capo'])
         tuning = request.GET['tuning']
+        pitch_sanitize_prune = True if request.GET['sanitize'] == 'prune' else False
     except KeyError:
         return HttpResponse("Need to specify number of frets, capo position, and guitar tuning")
 
     # transcribe the audio
     # TODO: GUI spinner
     t = Transcription(fk_audio=audio)
-    t.transcribe(frets, capo, tuning)
+    t.transcribe(frets, capo, tuning, pitch_sanitize_prune)
     
     # redirect to tab display page
     return HttpResponseRedirect('/tabulate/display/%d' % t.fk_tabid.fk_tmei.id)

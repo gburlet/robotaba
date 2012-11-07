@@ -18,7 +18,7 @@ class Transcription(models.Model):
     def __unicode__(self):
         return self.id
 
-    def transcribe(self, frets, capo, tuning):
+    def transcribe(self, frets, capo, tuning, pitch_sanitize_prune):
         # get path of audio file being transcribed
         path = os.path.join(settings.MEDIA_ROOT, str(self.fk_audio.audio_file))
 
@@ -32,7 +32,7 @@ class Transcription(models.Model):
         )
         guitar.save()
 
-        pestimator = PitchDetect(fk_audio=self.fk_audio, fk_guitar=guitar)
+        pestimator = PitchDetect(fk_audio=self.fk_audio, fk_guitar=guitar, pitch_sanitize_prune=pitch_sanitize_prune)
         # writing to the database writes the analysis start timestamp
         pestimator.save()
 
@@ -44,7 +44,7 @@ class Transcription(models.Model):
         ########################
         # TABLATURE GENERATION #
         ########################
-        taber = Tabulate(fk_pmei=self.fk_pid.fk_pmei, fk_guitar=guitar)
+        taber = Tabulate(fk_pmei=self.fk_pid.fk_pmei, fk_guitar=guitar, pitch_sanitize_prune=pitch_sanitize_prune)
         # writing to the database writes the analysis start timestamp
         taber.save()
 
