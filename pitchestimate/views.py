@@ -83,7 +83,8 @@ def process(request, audio_id):
     pestimator.save()
 
     # TODO: create spinner on the interface
-    pestimator.estimate_pitches()
+    audio_url = request.build_absolute_uri(audio.audio_file.url)
+    pestimator.estimate_pitches(audio_url)
 
     # redirect to xml display
     return HttpResponseRedirect('/media/%s' % pestimator.fk_pmei.mei_file.name)

@@ -61,9 +61,10 @@ def process(request, audio_id):
         return HttpResponse("Need to specify number of frets, capo position, and guitar tuning")
 
     # transcribe the audio
+    audio_url = request.build_absolute_uri(audio.audio_file.url)
     # TODO: GUI spinner
     t = Transcription(fk_audio=audio)
-    t.transcribe(frets, capo, tuning, pitch_sanitize_prune)
+    t.transcribe(frets, capo, tuning, pitch_sanitize_prune, audio_url)
     
     # redirect to tab display page
     return HttpResponseRedirect('/tabulate/display/%d' % t.fk_tabid.fk_tmei.id)

@@ -93,7 +93,7 @@ class PitchDetect(models.Model):
     # timestamp when processing has completed
     output_ts = models.DateTimeField(auto_now=True)
 
-    def estimate_pitches(self):
+    def estimate_pitches(self, audio_url):
         input_audio_path = os.path.join(settings.MEDIA_ROOT, self.fk_audio.audio_file.name)
         # get filename and change extension to mei
         filename, _ = os.path.splitext(os.path.split(input_audio_path)[1])
@@ -102,7 +102,7 @@ class PitchDetect(models.Model):
         # perform the pitch estimation on the audio input file
         t = PolyTrans()
         note_events = t.transcribe(input_audio_path)
-        mei_str = t.write_mei(note_events)
+        mei_str = t.write_mei(note_events, audio_url)
 
         # save the mei to the output file
         file_contents = ContentFile(mei_str)

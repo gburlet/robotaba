@@ -18,7 +18,7 @@ class Transcription(models.Model):
     def __unicode__(self):
         return self.id
 
-    def transcribe(self, frets, capo, tuning, pitch_sanitize_prune):
+    def transcribe(self, frets, capo, tuning, pitch_sanitize_prune, audio_url):
         # get path of audio file being transcribed
         path = os.path.join(settings.MEDIA_ROOT, str(self.fk_audio.audio_file))
 
@@ -36,7 +36,7 @@ class Transcription(models.Model):
         # writing to the database writes the analysis start timestamp
         pestimator.save()
 
-        pestimator.estimate_pitches()
+        pestimator.estimate_pitches(audio_url)
 
         # attach the pitch detection analysis information to the transcription model
         self.fk_pid = pestimator
