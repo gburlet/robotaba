@@ -91,7 +91,10 @@ class Guitarify:
         '''
 
         note_container = note.getParent()
+
+        # remove the note
         note_container.removeChild(note)
+        
         if note_container.getName() == 'chord':
             layer = note_container.getParent()
             notes_in_chord = note_container.getChildrenByName('note')
@@ -101,9 +104,16 @@ class Guitarify:
                 self.redistribute = True
             elif len(notes_in_chord) == 1:
                 # there is only one note left, so it's no longer a chord
+                chord_when = note_container.getAttribute('when').value
+                notes_in_chord[0].addAttribute('when', chord_when)
                 layer.addChildBefore(note_container, notes_in_chord[0])
                 layer.removeChild(note_container)
         else:
+            # remove timestamp from timeline   
+            when_id = note.getAttribute('when').value
+            when = self.mei_doc.getElementById(when_id)
+            when.getParent().removeChild(when)
+
             self.redistribute = True
 
     def _redistribute(self):
