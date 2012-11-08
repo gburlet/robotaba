@@ -81,7 +81,7 @@ class Tabulate(models.Model):
         score.parse_mei_str(sanitized_mei_str)
         
         # start up the genetic algorithm
-        ga = SimpleGA(200, 2, 4, 0.9, 0.04, True)
+        ga = SimpleGA(500, 50, 5, 0.9, 0.04, True)
 
         # create tablature for the guitar with the given parameters
         ga.evolve(score, guitar)
