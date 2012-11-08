@@ -358,7 +358,7 @@ alphatab.tablature.PageViewLayout.prototype.paintSongInfo = function(ctx,clientA
 		if(tuning != null) {
 			ctx.get(1).addString(tuning.Name,alphatab.tablature.drawing.DrawingResources.effectFont,x,y);
 			y += Math.floor(15 * this.scale);
-            if(song.words != null) {
+            if(song.words > 0) {
                 str = this.parsePageSetupString(song.pageSetup.words);
                 ctx.get(1).addString(str,alphatab.tablature.drawing.DrawingResources.effectFont,x,y);
 		    }
