@@ -15,7 +15,7 @@ class Guitarify:
         self.redistribute = False # whether or not to redistribute notes
 
     def sanitize_mei_file(self, mei_path, output_mei_path=None, prune=True):
-        self.mei_doc = XmlImport.documentFromFile(str(mei_path))
+        self.mei_doc = XmlImport.documentFromFile(mei_path)
         self._sanitize_mei(prune)
 
         if output_mei_path:
@@ -84,6 +84,19 @@ class Guitarify:
 
         if prune and self.redistribute:
             self._redistribute()
+
+        # now limit degree of polyphony to six
+        mei_chords = self.mei_doc.getElementsByName('chord')
+        for mei_c in mei_chords:
+            mei_notes = mei_c.getChildrenByName('note')
+
+            polyphony = len(mei_notes)
+            if polyphony > 6:
+                notes = sorted([Note(str(mei_n.getAttribute('pname').value), int(mei_n.getAttribute('oct').value), str(mei_n.getId())) for mei_n in mei_notes])
+                # discard notes with the highest pitch
+                for n in notes[6:]:
+                    mei_n = self.mei_doc.getElementById(n.id)
+                    mei_n.getParent().removeChild(mei_n)
 
     def _remove_note(self, note):
         '''
