@@ -7,7 +7,6 @@ from robotaba.models import Guitar as GuitarModel
 from pitchestimate.models import MeiPitch
 from tabulate.models import MeiTab, Tabulate
 from tabulate.forms import UploadScoreForm
-from tabulate.resources.meitoalphatex import meitoalphatex
 
 import os
 
@@ -85,12 +84,4 @@ def process(request, pmei_id):
     taber.gen_tab()
 
     # redirect to tab display page
-    return HttpResponseRedirect('/tabulate/display/%d' % taber.fk_tmei.id)
-
-def display(request, tmei_id):
-    # query db for the mei tab file
-    tmei = get_object_or_404(MeiTab, pk=tmei_id)
-
-    alpha_tex = meitoalphatex(tmei.mei_file.path)
-
-    return render_to_response('displaytab.html', {'alphatex': alpha_tex}, context_instance=RequestContext(request))
+    return HttpResponseRedirect('/display/%d' % taber.fk_tmei.id)

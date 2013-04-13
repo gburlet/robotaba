@@ -40,3 +40,9 @@ class GuitarDataForm(forms.Form):
         max_value=12,
         initial=0
     )
+
+class UploadTablatureForm(MetaDataForm):
+    score_file = forms.FileField(
+        label = "Select a symbolic music file",
+        help_text = "Maximum 15MB (.xml, .mei)"
+    )

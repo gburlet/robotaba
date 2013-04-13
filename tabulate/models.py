@@ -14,6 +14,7 @@ from darwintab.guitar.guitar import Guitar
 from darwintab.score.score import Score
 from darwintab.score.scoreevent import Note
 
+from musicxmlmeiconversion.musicxmltomei import MusicXMLtoMei
 from pymei import XmlImport, XmlExport, MeiElement
 
 '''
@@ -25,6 +26,15 @@ class MeiTab(models.Model):
 
     def get_abs_path(self):
         return str(os.path.join(settings.MEDIA_ROOT, self.mei_file.name))
+
+    def convert_musicxml(self, mei_filename, musicxml_str):
+        # convert the musicxml string to mei string
+        meiconv = MusicXMLtoMei(input_str=musicxml_str)
+        mei_str = meiconv.convert()
+
+        # save the string to a file in the Django media location
+        file_contents = ContentFile(mei_str)
+        self.mei_file.save(mei_filename, file_contents, save=True)
 
     def append_guitar_data(self, tuning, capo):
         '''
@@ -81,7 +91,7 @@ class Tabulate(models.Model):
         score.parse_mei_str(sanitized_mei_str)
         
         # start up the genetic algorithm
-        ga = SimpleGA(500, 50, 5, 0.9, 0.04, True)
+        ga = SimpleGA(2, 0, 5, 0.9, 0.04, True)
 
         # create tablature for the guitar with the given parameters
         ga.evolve(score, guitar)

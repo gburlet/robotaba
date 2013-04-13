@@ -14,7 +14,8 @@ urlpatterns = patterns('',
     url(r'^pitchestimate/(?P<audio_id>\d+)/$', 'pitchestimate.views.process'),
     url(r'^tabulate/upload/$', 'tabulate.views.upload_score', name='tabulate_upload'),
     url(r'^tabulate/(?P<pmei_id>\d+)/$', 'tabulate.views.process'),
-    url(r'^tabulate/display/(?P<tmei_id>\d+)/$', 'tabulate.views.display'),
+    url(r'^display/upload/$', 'robotaba.views.upload_tablature', name='display_upload'),
+    url(r'^display/(?P<tmei_id>\d+)/$', 'robotaba.views.display'),
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     url(r'^admin/', include(admin.site.urls))
 )

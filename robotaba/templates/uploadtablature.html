@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %} Upload Tablature {% endblock %}
+
+{% block content %}
+
+<!-- Main hero unit for a primary marketing message or call to action -->
+<div class="row-fluid">
+    <div class="span12">
+        <div class="hero-unit">
+            <div class="row-fluid">
+                <div class="span12">
+                    <h1>Upload Tablature</h1>
+                    <p>Upload a symbolic music file containing guitar tablature.</p>
+                    <form action="." method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <table>
+                            <tr>
+                                <td colspan="2">{{ form.non_field_errors }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ form.title.label_tag }}</td><td>{{ form.title }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ form.artist.label_tag }}</td><td>{{ form.artist }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ form.copyright.label_tag }}</td><td>{{ form.copyright }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><hr/></td>
+                            </tr>
+                            <tr>
+                                <td>{{ form.score_file.label_tag }}</td><td>{{ form.score_file }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="highlight">{{ form.score_file.help_text }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><input type="submit" value="Upload"/></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
