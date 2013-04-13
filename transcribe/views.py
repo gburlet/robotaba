@@ -5,7 +5,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from robotaba.models import MetaMusic, Audio
 from transcribe.models import Transcription
 from transcribe.forms import UploadAudioForm
-from tabulate.views import display
 
 import os
 
@@ -67,4 +66,4 @@ def process(request, audio_id):
     t.transcribe(frets, capo, tuning, pitch_sanitize_prune, audio_url)
     
     # redirect to tab display page
-    return HttpResponseRedirect('/tabulate/display/%d' % t.fk_tabid.fk_tmei.id)
+    return HttpResponseRedirect('/display/%d' % t.fk_tabid.fk_tmei.id)
