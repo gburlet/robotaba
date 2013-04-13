@@ -1,5 +1,5 @@
-from darwintab.guitar.guitar import Guitar
-from darwintab.score.scoreevent import Note
+from guitar.guitar import Guitar
+from score.scoreevent import Note
 from pymei import XmlImport, XmlExport, MeiElement
 
 class Guitarify:
