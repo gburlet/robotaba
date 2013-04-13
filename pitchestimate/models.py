@@ -5,9 +5,9 @@ from django.conf import settings
 from robotaba.models import Audio, MetaMusic
 from robotaba.models import Guitar as GuitarModel
 from robotaba.resources.guitarify import Guitarify
+from polytrans import PolyphonicTranscription
 
 from musicxmlmeiconversion.musicxmltomei import MusicXMLtoMei
-from ztranscribe.polytrans import PolyTrans
 
 from pymei import XmlImport, XmlExport, MeiElement
 
@@ -100,9 +100,8 @@ class PitchDetect(models.Model):
         filename += '.mei'
 
         # perform the pitch estimation on the audio input file
-        t = PolyTrans()
-        note_events = t.transcribe(input_audio_path)
-        mei_str = t.write_mei(note_events, audio_url)
+        pt = PolyphonicTranscription()
+        mei_str = pt(audio_url, input_audio_path)
 
         # save the mei to the output file
         file_contents = ContentFile(mei_str)
