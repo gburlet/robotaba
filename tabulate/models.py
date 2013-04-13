@@ -6,16 +6,13 @@ from pitchestimate.models import MeiPitch
 from robotaba.models import MetaMusic
 from robotaba.models import Guitar as GuitarModel
 from robotaba.resources.guitarify import Guitarify
-
-import os
-
-from darwintab.ga.simplega import SimpleGA
-from darwintab.guitar.guitar import Guitar
-from darwintab.score.score import Score
-from darwintab.score.scoreevent import Note
+from robotaba.resources.guitar.guitar import Guitar
+from tabarrange import TablatureArrangement
 
 from musicxmlmeiconversion.musicxmltomei import MusicXMLtoMei
 from pymei import XmlImport, XmlExport, MeiElement
+
+import os
 
 '''
 Entities
@@ -83,21 +80,9 @@ class Tabulate(models.Model):
         guitarify = Guitarify(self.fk_guitar.num_frets, self.fk_guitar.tuning, self.fk_guitar.capo)
         sanitized_mei_str = guitarify.sanitize_mei_file(self.fk_pmei.get_abs_path(), None, prune=self.pitch_sanitize_prune)
 
-        # instantiate a model of the guitar the user is using
-        guitar = Guitar(self.fk_guitar.num_frets, self.fk_guitar.tuning, self.fk_guitar.capo)
-
-        # generate the score model
-        score = Score()
-        score.parse_mei_str(sanitized_mei_str)
-        
-        # start up the genetic algorithm
-        ga = SimpleGA(2, 0, 5, 0.9, 0.04, True)
-
-        # create tablature for the guitar with the given parameters
-        ga.evolve(score, guitar)
-        
-        # save the elites to the output file
-        mei_str = ga.save_elite(score)
+        # perform the tablature arrangement of the input mei
+        ta = TablatureArrangement()
+        mei_str = ta(self.fk_guitar.num_frets, self.fk_guitar.tuning, self.fk_guitar.capo, sanitized_mei_str)
 
         file_contents = ContentFile(mei_str)
         tab = MeiTab(fk_mid=self.fk_pmei.fk_mid)
