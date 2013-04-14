@@ -2,6 +2,92 @@
 
 {% block title %} Search Results {% endblock %}
 
+{% block js_includes %}
+<script type="text/javascript">
+    $('document').ready(function() {
+        numPages = {{ pages|length }};
+
+        queryParameters = getQueryParameters();
+        curPage = parseInt(queryParameters['p']);
+        if (!curPage) {
+            curPage = 1;
+        }
+
+        if (curPage-1 < 1) {
+            // disable prev page link
+            $('#prevpage').addClass('disabled');
+        }
+        if (curPage+1 > numPages) {
+            // disable next page link
+            $('#nextpage').addClass('disabled');
+        }
+
+        // highlight current page link
+        cur_page = "#page_" + curPage;
+        $(cur_page).addClass('active');
+    });
+
+    function getQueryParameters() {
+        /*
+         * queryParameters -> handles the query string parameters
+         * queryString -> the query string without the fist '?' character
+         * re -> the regular expression
+         * m -> holds the string matching the regular expression
+         * code excerpt from http://www.samaxes.com/2011/09/change-url-parameters-with-jquery/
+         */
+        var queryParameters = {}, queryString = location.search.substring(1),
+            re = /([^&=]+)=([^&]*)/g, m;
+         
+        // Creates a map with the query string parameters
+        while (m = re.exec(queryString)) {
+            queryParameters[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+
+        return queryParameters;
+    }
+
+    function updatePage(page) {
+        
+        queryParameters = getQueryParameters();
+
+        // Add new parameters or update existing ones
+        queryParameters['p'] = page;
+         
+        location.search = $.param(queryParameters); // Causes page to reload
+    }
+
+    function prevPage() {
+        queryParameters = getQueryParameters();
+
+        // Add new parameters or update existing ones
+        pagenum = parseInt(queryParameters['p']);
+        if (pagenum-1 < 1) {
+            return;
+        }
+        else {
+            queryParameters['p']--;
+        }
+         
+        location.search = $.param(queryParameters); // Causes page to reload
+    }
+
+    function nextPage(numpages) {
+        queryParameters = getQueryParameters();
+
+        // Add new parameters or update existing ones
+        pagenum = parseInt(queryParameters['p']);
+        if (pagenum+1 > numpages) {
+            return;
+        }
+        else {
+            queryParameters['p']++;
+        }
+
+        location.search = $.param(queryParameters); // Causes page to reload
+    }
+</script>
+{% endblock %}
+
 {% block content %}
 
 <!-- Main hero unit for a primary marketing message or call to action -->
@@ -33,6 +119,17 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+                        <center>
+                            <div class="pagination">
+                                <ul>
+                                    <li id="prevpage"><a class="body-content" href="javascript:void(0)" onclick="prevPage();">«</a></li>
+                                    {% for i in pages %}
+                                    <li id="page_{{ i }}"><a class="body-content" href="javascript:void(0)" onclick="updatePage({{i}});">{{ i }}</a></li>
+                                    {% endfor %}
+                                    <li id="nextpage"><a id="nextpage" class="body-content" href="javascript:void(0)" onclick="nextPage({{ pages|length }});">»</a></li>
+                                </ul>
+                            </div>
+                        </center>
                         {% else %}
                         <p class="contrast">No results. Please refine your query.</p>
                         {% endif %}

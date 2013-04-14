@@ -19,13 +19,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 '''
-
+from __future__ import division
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Q
+from django.conf import settings
 
 import os
+import math
 
 from robotaba.models import Audio, MetaMusic
 from tabulate.models import MeiTab
@@ -62,10 +64,19 @@ def search(request):
     if q:
         mm = [m.id for m in MetaMusic.objects.filter(Q(title__icontains=q) | Q(artist__icontains=q))]
         tabs = MeiTab.objects.filter(pk__in=mm)
+        page_numbers = [i+1 for i in range(int(math.ceil(len(tabs) / settings.NUM_RESULTS)))]
+
+        p = int(request.GET.get('p', 1))
+        i_start = (p-1) * settings.NUM_RESULTS
+        i_end = i_start + settings.NUM_RESULTS
+        if i_end >= len(tabs):
+            i_end = len(tabs)
+        tabs = tabs[i_start:i_end]
     else:
         tabs = []
+        page_numbers = []
 
-    return render_to_response('results.html', {'tabs': tabs}, context_instance=RequestContext(request))
+    return render_to_response('results.html', {'tabs': tabs, 'pages': page_numbers}, context_instance=RequestContext(request))
 
 def upload_tablature(request):
     '''
