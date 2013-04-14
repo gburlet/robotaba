@@ -52,8 +52,41 @@ class GuitarDataForm(forms.Form):
     )
     tuning = forms.ChoiceField(
         label="Guitar Tuning",
-        choices=[("standard", "Standard (E A D G B E)"),
-                   ("drop_d", "Drop D (D A D G B E)")]
+        choices=[
+            ("E4 B3 G3 D3 A2 E2", "Standard (E A D G B E)"),
+            ("Eb4 Bb3 Gb3 Db3 Ab2 Eb2", "Tune down 1/2 step (Eb Ab Db Gb Bb Eb)"),
+            ("D4 A3 F3 C3 G2 D2", "Tune down 1 step (D G C F A D)"),
+            ("C4 G3 Eb3 Bb2 F2 C2", "Tune down 2 steps (C F Bb Eb G3 C4)"),
+            ("E4 B3 G3 D3 A2 D2", "Dropped D (D A D G B E)"),
+            ("E4 A3 G3 D3 A2 D2", "Dropped D Variant (D A D G A E)"),
+            ("D4 B3 G3 D3 A2 D2", "Double Dropped D (D A D G B D)"),
+            ("D4 A3 F3 C3 G2 C2", "Dropped C (C G C F A D)"),
+            ("Gb4 Db4 A3 E3 B2 E2", "Dropped E (E B E A Db Gb)"),
+            ("Db4 Ab3 E3 B2 Gb2 B1", "Dropped B (B Gb B E Ab Db)"),
+            ("B3 Gb3 D3 A2 E2 B1", "Baritone (B E A D Gb B)"),
+            ("E4 C4 G3 C3 G2 C2", "Open C (C G C G C E)"),
+            ("Eb4 C4 G3 C3 G2 C2", "Open Cm (C G C G C Eb)"),
+            ("E4 A3 G3 C3 G2 C2", "Open C6 (C G C G A E)"),
+            ("E4 B3 G3 E3 G2 C2", "Open CM7 (C G E G B E)"),
+            ("D4 A3 Gb3 D3 A2 D2", "Open D (D A D Gb A D)"),
+            ("D4 A3 F3 D3 A2 D2", "Open Dm (D A D F A D)"),
+            ("D4 A3 D3 D3 A2 D2", "Open D5 (D A D D A D)"),
+            ("D4 B3 Gb3 D3 A2 D2", "Open D6 (D A D Gb B D)"),
+            ("D4 A3 G3 D3 A2 D2", "Open Dsus4 (D A D G A D)"),
+            ("E4 B3 Ab3 E3 B2 E2", "Open E (E B E Ab B E)"),
+            ("E4 B3 G3 E3 B2 E2", "Open Em (E B E G B E)"),
+            ("E4 B3 G3 E3 A2 E2", "Open Esus11 (E A E G B E"),
+            ("F4 C4 F3 C3 A2 F2", "Open F (F A C F C F)"),
+            ("D4 B3 G3 D3 G2 D2", "Open G (D G D G B D)"),
+            ("D4 Bb3 G3 D3 G2 D2", "Open Gm (D G D G Bb D)"),
+            ("D4 C4 G3 D3 G2 D2", "Open Gsus4 (D G D G C D)"),
+            ("E4 B3 G3 D3 G2 D2", "Open G6 (D G D G B E)"),
+            ("E4 Db4 A3 E3 A2 E2", "Open A (E A E A Db E)"),
+            ("E4 C4 A3 E3 A2 E2", "Open Am (E A E A C E)"),
+            ("D4 B3 G3 D3 B2 G2", "Dobro Open G (G B D G B D)"),
+            ("E4 B3 G4 D4 A3 E3", "Nashville (E A D G B E)"),
+            ("E4 B3 Gb3 D3 A2 E2", "Lute or Vihuela (E A D Gb B E)")
+        ]
     )
     capo = forms.IntegerField(
         label="Fret location of capo",

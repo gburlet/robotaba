@@ -64,7 +64,8 @@ class MeiTab(models.Model):
         mei_doc = XmlImport.documentFromFile(mei_path)
 
         staff_def = mei_doc.getElementsByName('staffDef')[0]
-        sounding_pitches = Guitar.tunings[tuning]
+        g = Guitar(tuning=str(tuning), capo=capo)
+        sounding_pitches = g.strings
         # From the MEI guidelines:
         # "this is given using the written pitch, not the sounding pitch. 
         # For example, the Western 6-string guitar, in standard tuning, sounds an octave below written pitch."

@@ -89,6 +89,10 @@ class Note(ScoreEvent):
         # pitch class
         if pname.upper() in Note.pitch_classes:
             self.pname = pname.upper()
+        elif pname[-1] == 'b':
+            # there's a flat, convert it to a sharp
+            i = Note.pitch_classes.index(pname[:-1])
+            self.pname = Note.pitch_classes[(i-1) % len(Note.pitch_classes)]
         else:
             raise ValueError('Invalid pitch name')
 
