@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %} Search Results {% endblock %}
+
+{% block content %}
+
+<!-- Main hero unit for a primary marketing message or call to action -->
+<div class="row-fluid">
+    <div class="span12">
+        <div class="well">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="body-content">
+                        <h1 class="body-content">Search Results</h1>
+                        {% if tabs %}
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Artist</th>
+                                    <th>Download</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tab in tabs %}
+                                <tr>
+                                    <td>{{ tab.fk_mid.title }}</td>
+                                    <td>{{ tab.fk_mid.artist }}</td>
+                                    <td>( <a href="/media/{{ tab.mei_file }}">mei</a> | <a href="">xml</a> )</td>
+                                    <td><a class="btn btn-mini" href="/display/{{ tab.id }}">View</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <p class="contrast">No results. Please refine your query.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

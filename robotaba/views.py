@@ -23,6 +23,7 @@ THE SOFTWARE.
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
+from django.db.models import Q
 
 import os
 
@@ -51,6 +52,20 @@ def contact(request):
     '''
 
     return render_to_response('contact.html', context_instance=RequestContext(request))
+
+def search(request):
+    '''
+    Search for tabs
+    '''
+
+    q = request.GET.get('q')
+    if q:
+        mm = [m.id for m in MetaMusic.objects.filter(Q(title__icontains=q) | Q(artist__icontains=q))]
+        tabs = MeiTab.objects.filter(pk__in=mm)
+    else:
+        tabs = []
+
+    return render_to_response('results.html', {'tabs': tabs}, context_instance=RequestContext(request))
 
 def upload_tablature(request):
     '''

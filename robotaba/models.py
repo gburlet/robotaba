@@ -23,8 +23,8 @@ THE SOFTWARE.
 from django.db import models
 
 class MetaMusic(models.Model):
-    artist = models.CharField(max_length=50)
-    title = models.CharField(max_length=100)
+    artist = models.CharField(max_length=50, db_index=True)
+    title = models.CharField(max_length=100, db_index=True)
     copyright = models.CharField(max_length=50, null=True)
 
 class Audio(models.Model):

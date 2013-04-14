@@ -28,6 +28,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'robotaba.views.home', name='home_url'),
+    url(r'^search/', 'robotaba.views.search', name='search_url'),
     url(r'^about/', 'robotaba.views.about', name='about_url'),
     url(r'^contact/', 'robotaba.views.contact', name='contact_url'),
     url(r'^transcribe/upload/$', 'transcribe.views.upload_audio', name='transcribe_upload'),
