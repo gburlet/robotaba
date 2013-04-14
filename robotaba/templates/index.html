@@ -12,7 +12,7 @@
                 <div class="span5">
                     <h1>Online Guitar Tablature Transcription</h1>
                     <p>Upload a recording of you playing guitar. Serenade robot. Robot writes tab. Correct Robot. Repeat.</p>
-                    <p><a class="btn btn-primary btn-large" href="transcribe/upload/">Serenade Robot</a></p>
+                    <p><a class="btn btn-primary btn-large" href="/transcribe/upload/">Serenade Robot</a></p>
                 </div>
                 <div class="span7">
                 </div>
@@ -22,21 +22,27 @@
 </div>
 
 <div class="row-fluid">
-    <div class="span4">
+    <div class="span3">
         <h2>Pitch Estimation</h2>
-        <p>Perform fundamental frequency estimation on an audio file. Returns an mei file containing the pitch information.</p>
-        <p><a class="btn" href="pitchestimate/upload/">Try it out &raquo;</a></p>
+        <p>Perform fundamental frequency estimation on an audio file. Returns an MEI file containing the pitch information.</p>
+        <p><a class="btn" href="/pitchestimate/upload/">Try it out &raquo;</a></p>
     </div>
-    <div class="span4">
+    <div class="span3">
         <h2>Tablature Generation</h2>
-        <p>Generate playable guitar tablature from a symbolic music file in MusicXml or Mei format and display it in the web browser.</p>
-        <p><a class="btn" href="tabulate/upload/">Try it out &raquo;</a></p>
+        <p>Generate playable guitar tablature from a symbolic music file in MusicXml or MEI format and display it in the web browser.</p>
+        <p><a class="btn" href="/tabulate/upload/">Try it out &raquo;</a></p>
     </div>
-    <div class="span4">
+    <div class="span3">
         <h2>Transcribe Audio</h2>
         <p>Perform pitch estimation followed by tablature generation to automatically create guitar tablature from your guitar recording.</p>
-        <p><a class="btn" href="transcribe/upload/">Try it out &raquo;</a></p>
+        <p><a class="btn" href="/transcribe/upload/">Try it out &raquo;</a></p>
     </div>
+    <div class="span3">
+        <h2>Display tablature</h2>
+        <p>View tablature encoded in an MEI file.</p>
+        <p><a class="btn" href="/display/upload/">Try it out &raquo;</a></p>
+    </div>
+
 </div>
 
 {% endblock %}
