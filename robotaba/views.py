@@ -39,7 +39,13 @@ def home(request):
     Serve the home page
     '''
 
-    return render_to_response('index.html', context_instance=RequestContext(request))
+    # get 10 most recent tablatures.
+    num_tabs = 4
+    tabs = MeiTab.objects.all()
+    if num_tabs <= len(tabs):
+        tabs = tabs[len(tabs)-num_tabs:]
+    
+    return render_to_response('index.html', {'tabs': tabs}, context_instance=RequestContext(request))
 
 def about(request):
     '''
@@ -54,6 +60,23 @@ def contact(request):
     '''
 
     return render_to_response('contact.html', context_instance=RequestContext(request))
+
+def tabs(request):
+    '''
+    List all tabs
+    '''
+
+    tabs = MeiTab.objects.all()
+    page_numbers = [i+1 for i in range(int(math.ceil(len(tabs) / settings.NUM_RESULTS)))]
+
+    p = int(request.GET.get('p', 1))
+    i_start = (p-1) * settings.NUM_RESULTS
+    i_end = i_start + settings.NUM_RESULTS
+    if i_end >= len(tabs):
+        i_end = len(tabs)
+    tabs = tabs[i_start:i_end]
+
+    return render_to_response('tabs.html', {'tabs': tabs, 'pages': page_numbers}, context_instance=RequestContext(request))
 
 def search(request):
     '''
