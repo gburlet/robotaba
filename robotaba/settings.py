@@ -1,6 +1,8 @@
 # Django settings for robotaba project.
 import os
 
+HOST_PREFIX = ''
+
 PROJECT_DIR = os.path.dirname(__file__)
 
 DEBUG = True
@@ -56,7 +58,7 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = '/media/'
+MEDIA_URL = '%s/media/' % HOST_PREFIX
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -66,7 +68,7 @@ STATIC_ROOT = ''
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = '%s/static/' % HOST_PREFIX
 
 # Additional locations of static files
 STATICFILES_DIRS = (
