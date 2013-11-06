@@ -2,6 +2,7 @@ Robotaba
 ========
 
 Automatic Guitar Tablature Transcription Online
+Demo: http://ddmal.music.mcgill.ca/robotaba
 
 Dependencies
 ------------
